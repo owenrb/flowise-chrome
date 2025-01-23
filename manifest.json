@@ -6,5 +6,6 @@
   "action": {
     "default_popup": "client.html",
     "default_icon": "ai_logo.png"
-  }
+  },
+  "host_permissions": ["http://*:*/*"]
 }
