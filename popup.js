@@ -1,55 +1,107 @@
+// Function to open tabs
+function openTab(evt, tabName) {
+  const tabcontent = document.getElementsByClassName("tabcontent");
+  for (let i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+
+  const tablinks = document.getElementsByClassName("tablinks");
+  for (let i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+
+// Set the default tab to open
+document
+  .getElementById("openCompletion")
+  .addEventListener("click", async (evt) => {
+    openTab(evt, "Completion");
+  });
+
+// Set the default tab to open
+document
+  .getElementById("openSettings")
+  .addEventListener("click", async (evt) => {
+    openTab(evt, "Settings");
+  });
+
+document.getElementById("openCompletion").click();
+
+// Save settings
+document.getElementById("saveSettings").addEventListener("click", () => {
+  const modelName = document.getElementById("modelName").value;
+  chrome.storage.local.set({ modelName: modelName }, () => {
+    alert("Settings saved!");
+  });
+});
+
+// Load settings when the popup is opened
+document.addEventListener("DOMContentLoaded", () => {
+  chrome.storage.local.get(["modelName"], (result) => {
+    if (result.modelName) {
+      document.getElementById("modelName").value = result.modelName;
+    }
+  });
+});
+
+// Generate response
 document
   .getElementById("generateButton")
   .addEventListener("click", async () => {
-    const prompt =
-      "Check for any grammar mistake:\n\n" +
-      document.getElementById("promptInput").value;
+    const prompt = document.getElementById("promptInput").value;
     const responseOutput = document.getElementById("responseOutput");
     responseOutput.textContent = "Generating response...";
 
-    try {
-      const response = await fetch(
-        "http://localhost:11434/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "llama3.2",
-            messages: [{ role: "user", content: prompt }],
-            stream: true,
-          }),
-        }
-      );
+    chrome.storage.local.get(["modelName"], async (result) => {
+      const modelName = result.modelName || "llama3.2"; // Default to 'gpt-4' if no model is set
 
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let result = "";
+      try {
+        const response = await fetch(
+          "http://localhost:11434/v1/chat/completions",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model: modelName,
+              messages: [{ role: "user", content: prompt }],
+              stream: true,
+            }),
+          }
+        );
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let result = "";
 
-        const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split("\n");
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
 
-        for (const line of lines) {
-          if (line.startsWith("data: ")) {
-            const json = line.slice(6);
-            if (json === "[DONE]") {
-              break;
-            }
-            const data = JSON.parse(json);
-            const content = data.choices[0].delta.content;
-            if (content) {
-              result += content;
-              responseOutput.textContent = result;
+          const chunk = decoder.decode(value, { stream: true });
+          const lines = chunk.split("\n");
+
+          for (const line of lines) {
+            if (line.startsWith("data: ")) {
+              const json = line.slice(6);
+              if (json === "[DONE]") {
+                break;
+              }
+              const data = JSON.parse(json);
+              const content = data.choices[0].delta.content;
+              if (content) {
+                result += content;
+                responseOutput.textContent = result;
+              }
             }
           }
         }
+      } catch (error) {
+        responseOutput.textContent = "Error: " + error.message;
       }
-    } catch (error) {
-      responseOutput.textContent = "Error: " + error.message;
-    }
+    });
   });
