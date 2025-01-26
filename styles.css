@@ -8,19 +8,18 @@ body {
 .container {
   display: flex;
   flex-direction: column;
-  gap: 10px;
 }
 
 /* Style the tab */
 .tab {
   overflow: hidden;
-  border: 1px solid #ccc;
-  background-color: #f1f1f1;
+  /*border: 1px solid #ccc; 
+  background-color: #f1f1f1;*/
 }
 
 /* Style the buttons inside the tab */
 .tab button {
-  background-color: inherit;
+  background-color: rgb(155, 175, 222);
   float: left;
   border: none;
   outline: none;
@@ -29,14 +28,22 @@ body {
   transition: 0.3s;
 }
 
+.tab-left {
+  border-top-left-radius: 5px;
+}
+
+.tab-right {
+  border-top-right-radius: 5px;
+}
+
 /* Change background color of buttons on hover */
 .tab button:hover {
-  background-color: #ddd;
+  background-color: #0056b3;
 }
 
 /* Create an active/current tablink class */
 .tab button.active {
-  background-color: #ccc;
+  background-color: #007BFF;
 }
 
 /* Style the tab content */
@@ -44,7 +51,6 @@ body {
   display: none;
   padding: 10px;
   border: 1px solid #ccc;
-  border-top: none;
 }
 
 textarea {
@@ -60,10 +66,66 @@ button {
   color: white;
   border: none;
   cursor: pointer;
+  padding: 10px 20px;
 }
 
 button:hover {
   background-color: #0056b3;
+}
+
+.btn-left {
+  text-decoration: none;
+  display: inline-block;
+  border-top-left-radius: 7px;
+  border-bottom-left-radius: 7px;
+  transition: background-color 0.3s ease;
+  border-right: thin solid #ccc;
+}
+
+.btn-right {
+  text-decoration: none;
+  display: inline-block;
+  border-top-right-radius: 7px;
+  border-bottom-right-radius: 7px;
+  transition: background-color 0.3s ease;
+}
+/* Container for the button and dropdown */
+.btn-group {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    margin: 5px;
+}
+
+/* Dropdown content (hidden by default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+/* Dropdown buttons */
+.dropdown-content .btn {
+  width: 100%;
+  text-align: left;
+  border-radius: 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.dropdown-content .btn:last-child {
+  border-bottom: none;
+}
+
+/* Show the dropdown menu on hover */
+.btn-group:hover .dropdown-content {
+  display: block;
 }
 
 #responseOutput {

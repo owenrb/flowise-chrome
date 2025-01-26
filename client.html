@@ -10,8 +10,10 @@
     <div class="container">
       <!-- Tab Links -->
       <div class="tab">
-        <button class="tablinks" id="openCompletion">Completion</button>
-        <button class="tablinks" id="openSettings">Settings</button>
+        <button class="tablinks tab-left" id="openCompletion">
+          Completion
+        </button>
+        <button class="tablinks tab-right" id="openSettings">Settings</button>
       </div>
 
       <!-- Tab Content -->
@@ -20,14 +22,26 @@
           id="promptInput"
           placeholder="Enter your prompt here..."
         ></textarea>
-        <button id="generateButton">Generate Response</button>
+        <div class="btn-group">
+          <button id="generateButton" class="btn-left">
+            Generate Response
+          </button>
+          <button id="selectButton" class="btn-right">▼</button>
+          <div class="dropdown-content">
+            <button id="grammarButton" class="btn">Check Grammar</button>
+            <button id="rewriteButton" class="btn">Rewrite</button>
+            <button id="explainButton" class="btn">Explain</button>
+          </div>
+        </div>
         <div id="responseOutput"></div>
       </div>
 
       <div id="Settings" class="tabcontent">
         <label for="modelName">Model Name:</label>
         <input type="text" id="modelName" placeholder="e.g., llama3.2" />
-        <button id="saveSettings">Save Settings</button>
+        <button id="saveSettings" class="btn-left btn-right">
+          Save Settings
+        </button>
       </div>
     </div>
     <script src="popup.js"></script>
