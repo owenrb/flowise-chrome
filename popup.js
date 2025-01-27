@@ -33,7 +33,8 @@ document.getElementById("openCompletion").click()
 // Save settings
 document.getElementById("saveSettings").addEventListener("click", () => {
   const modelName = document.getElementById("modelName").value
-  chrome.storage.local.set({ modelName: modelName }, () => {
+  const hostName = document.getElementById("hostName").value
+  chrome.storage.local.set({ modelName, hostName }, () => {
     alert("Settings saved!")
   })
 })
@@ -45,27 +46,30 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("modelName").value = result.modelName
     }
   })
+  chrome.storage.local.get(["hostName"], (result) => {
+    if (result.hostName) {
+      document.getElementById("hostName").value = result.hostName
+    }
+  })
 })
 
 async function chatCompletion(prompt) {
-  chrome.storage.local.get(["modelName"], async (result) => {
-    const modelName = result.modelName || "llama3.2" // Default to 'gpt-4' if no model is set
+  chrome.storage.local.get(["modelName", "hostName"], async (result) => {
+    const modelName = result.modelName || "llama3.2"
+    const hostName = result.hostName || "http://localhost:11434"
 
     try {
-      const response = await fetch(
-        "http://localhost:11434/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: modelName,
-            messages: [{ role: "user", content: prompt }],
-            stream: true,
-          }),
-        }
-      )
+      const response = await fetch(`${hostName}/v1/chat/completions`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: modelName,
+          messages: [{ role: "user", content: prompt }],
+          stream: true,
+        }),
+      })
 
       const reader = response.body.getReader()
       const decoder = new TextDecoder()
