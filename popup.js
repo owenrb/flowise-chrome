@@ -19,6 +19,8 @@ document
   .getElementById("openCompletion")
   .addEventListener("click", async (evt) => {
     openTab(evt, "Completion")
+    // show erase
+    document.getElementById("binImage").style.display = "inline"
   })
 
 // Set the default tab to open
@@ -26,6 +28,8 @@ document
   .getElementById("openSettings")
   .addEventListener("click", async (evt) => {
     openTab(evt, "Settings")
+    // hide erase
+    document.getElementById("binImage").style.display = "none"
   })
 
 document.getElementById("openCompletion").click()
