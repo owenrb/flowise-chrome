@@ -41,19 +41,28 @@ document.getElementById("saveSettings").addEventListener("click", () => {
 
 // Load settings when the popup is opened
 document.addEventListener("DOMContentLoaded", () => {
-  chrome.storage.local.get(["modelName"], (result) => {
-    if (result.modelName) {
-      document.getElementById("modelName").value = result.modelName
+  chrome.storage.local.get(
+    ["modelName", "hostName", "prompt", "result"],
+    (result) => {
+      if (result.modelName) {
+        document.getElementById("modelName").value = result.modelName
+      }
+      if (result.hostName) {
+        document.getElementById("hostName").value = result.hostName
+      }
+      if (result.prompt) {
+        document.getElementById("promptInput").value = result.prompt
+      }
+      if (result.result) {
+        document.getElementById("responseOutput").textContent = result.result
+      }
     }
-  })
-  chrome.storage.local.get(["hostName"], (result) => {
-    if (result.hostName) {
-      document.getElementById("hostName").value = result.hostName
-    }
-  })
+  )
 })
 
 async function chatCompletion(prompt) {
+  chrome.storage.local.set({ prompt })
+
   chrome.storage.local.get(["modelName", "hostName"], async (result) => {
     const modelName = result.modelName || "llama3.2"
     const hostName = result.hostName || "http://localhost:11434"
@@ -97,6 +106,7 @@ async function chatCompletion(prompt) {
           }
         }
       }
+      chrome.storage.local.set({ result })
     } catch (error) {
       responseOutput.textContent = "Error: " + error.message
     }
@@ -135,4 +145,14 @@ document.getElementById("explainButton").addEventListener("click", async () => {
   const responseOutput = document.getElementById("responseOutput")
   responseOutput.textContent = "Analyzing..."
   await chatCompletion("Explain the following:\n\n" + prompt)
+})
+
+// Clear Content
+document.getElementById("binImage").addEventListener("click", () => {
+  chrome.storage.local.set({ result: "", prompt: "" })
+
+  const prompt = document.getElementById("promptInput")
+  prompt.value = ""
+  const responseOutput = document.getElementById("responseOutput")
+  responseOutput.textContent = ""
 })

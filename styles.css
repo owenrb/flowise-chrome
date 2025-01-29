@@ -36,6 +36,18 @@ body {
   border-top-right-radius: 5px;
 }
 
+.mini {
+  margin-top: 7px;
+  margin-right: 2px;
+  justify-self:end;
+  border-bottom-style: dotted;
+  border-bottom-color: darkgray;
+}
+
+.mini img:hover {
+  cursor: pointer;
+}
+
 /* Change background color of buttons on hover */
 .tab button:hover {
   background-color: #0056b3;
