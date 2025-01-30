@@ -13,6 +13,7 @@
         <button class="tablinks tab-left" id="openCompletion">
           Completion
         </button>
+        <button class="tablinks" id="openChat">Chat</button>
         <button class="tablinks tab-right" id="openSettings">Settings</button>
         <div class="mini">
           <img
@@ -44,6 +45,10 @@
         <div class="md" id="responseOutput"></div>
       </div>
 
+      <div id="Chat" class="tabcontent chat">
+        <flowise-fullchatbot></flowise-fullchatbot>
+      </div>
+
       <div id="Settings" class="tabcontent">
         <label for="hostName">Hostname:</label>
         <input type="text" id="hostName" placeholder="http://localhost:11434" />
@@ -56,5 +61,6 @@
     </div>
     <script src="lib/marked.min.js"></script>
     <script src="popup.js"></script>
+    <script type="module" src="lib/flowise-web.js"></script>
   </body>
 </html>

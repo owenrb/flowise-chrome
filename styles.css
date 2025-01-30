@@ -164,3 +164,7 @@ input[type="text"] {
 .md p, .md ol, .md ul {
   margin: 0px;
 }
+
+div.chat {
+  margin-bottom: 60px;
+}

@@ -14,7 +14,7 @@ function openTab(evt, tabName) {
   evt.currentTarget.className += " active"
 }
 
-// Set the default tab to open
+// Completion
 document
   .getElementById("openCompletion")
   .addEventListener("click", async (evt) => {
@@ -23,7 +23,25 @@ document
     document.getElementById("binImage").style.display = "inline"
   })
 
-// Set the default tab to open
+let chatInitialized = false
+
+// Chat
+document.getElementById("openChat").addEventListener("click", async (evt) => {
+  openTab(evt, "Chat")
+  // hide erase
+  document.getElementById("binImage").style.display = "none"
+
+  if (!chatInitialized) {
+    Chatbot.initFull({
+      chatflowid: "180eb7ce-ec76-4003-b4e9-b4d13bb68e7f",
+      apiHost: "http://localhost:3000",
+    })
+
+    chatInitialized = true
+  }
+})
+
+// Setting
 document
   .getElementById("openSettings")
   .addEventListener("click", async (evt) => {
@@ -66,6 +84,25 @@ document.addEventListener("DOMContentLoaded", () => {
   )
 })
 
+const GRADIENT = [
+  "#cce2ed",
+  "#bedceb",
+  "#bedceb",
+  "#b0d5e8",
+  "#b0d5e8",
+  "#a1cde3",
+  "#a1cde3",
+  "#96c8e0",
+  "#96c8e0",
+  "#a1cde3",
+  "#a1cde3",
+  "#b0d5e8",
+  "#b0d5e8",
+  "#bedceb",
+  "#bedceb",
+  "#cce2ed",
+]
+
 async function chatCompletion(prompt) {
   chrome.storage.local.set({ prompt })
 
@@ -90,7 +127,12 @@ async function chatCompletion(prompt) {
       const decoder = new TextDecoder()
       let result = ""
 
+      let counter = 0
+
       while (true) {
+        responseOutput.style.backgroundColor =
+          GRADIENT[counter++ % GRADIENT.length]
+
         const { done, value } = await reader.read()
         if (done) break
 
@@ -113,8 +155,10 @@ async function chatCompletion(prompt) {
         }
       }
       chrome.storage.local.set({ result })
+      responseOutput.style.backgroundColor = null
     } catch (error) {
       responseOutput.textContent = "Error: " + error.message
+      responseOutput.style.backgroundColor = null
     }
   })
 }
