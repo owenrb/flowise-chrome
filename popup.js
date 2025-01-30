@@ -58,7 +58,9 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("promptInput").value = result.prompt
       }
       if (result.result) {
-        document.getElementById("responseOutput").textContent = result.result
+        document.getElementById("responseOutput").innerHTML = marked.parse(
+          result.result
+        )
       }
     }
   )
@@ -105,7 +107,7 @@ async function chatCompletion(prompt) {
             const content = data.choices[0].delta.content
             if (content) {
               result += content
-              responseOutput.textContent = result
+              responseOutput.innerHTML = marked.parse(result)
             }
           }
         }
