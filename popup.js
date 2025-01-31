@@ -32,9 +32,11 @@ document.getElementById("openChat").addEventListener("click", async (evt) => {
   document.getElementById("binImage").style.display = "none"
 
   if (!chatInitialized) {
-    Chatbot.initFull({
-      chatflowid: "180eb7ce-ec76-4003-b4e9-b4d13bb68e7f",
-      apiHost: "http://localhost:3000",
+    chrome.storage.local.get(["flowise", "flowId"], async (result) => {
+      Chatbot.initFull({
+        chatflowid: result.flowId,
+        apiHost: result.flowise || "http://127.0.0.1:3000",
+      })
     })
 
     chatInitialized = true
@@ -56,7 +58,9 @@ document.getElementById("openCompletion").click()
 document.getElementById("saveSettings").addEventListener("click", () => {
   const modelName = document.getElementById("modelName").value
   const hostName = document.getElementById("hostName").value
-  chrome.storage.local.set({ modelName, hostName }, () => {
+  const flowise = document.getElementById("flowise").value
+  const flowId = document.getElementById("flowId").value
+  chrome.storage.local.set({ modelName, hostName, flowise, flowId }, () => {
     alert("Settings saved!")
   })
 })
@@ -64,22 +68,18 @@ document.getElementById("saveSettings").addEventListener("click", () => {
 // Load settings when the popup is opened
 document.addEventListener("DOMContentLoaded", () => {
   chrome.storage.local.get(
-    ["modelName", "hostName", "prompt", "result"],
-    (result) => {
-      if (result.modelName) {
-        document.getElementById("modelName").value = result.modelName
-      }
-      if (result.hostName) {
-        document.getElementById("hostName").value = result.hostName
-      }
-      if (result.prompt) {
-        document.getElementById("promptInput").value = result.prompt
-      }
-      if (result.result) {
-        document.getElementById("responseOutput").innerHTML = marked.parse(
-          result.result
-        )
-      }
+    ["modelName", "hostName", "flowise", "flowId", "prompt", "result"],
+    (data) => {
+      const { modelName, hostName, prompt, result, flowise, flowId } = data
+
+      modelName && (document.getElementById("modelName").value = modelName)
+      hostName && (document.getElementById("hostName").value = hostName)
+      prompt && (document.getElementById("promptInput").value = prompt)
+      result &&
+        (document.getElementById("responseOutput").innerHTML =
+          marked.parse(result))
+      flowise && (document.getElementById("flowise").value = flowise)
+      flowId && (document.getElementById("flowId").value = flowId)
     }
   )
 })

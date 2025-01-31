@@ -168,3 +168,7 @@ input[type="text"] {
 div.chat {
   margin-bottom: 60px;
 }
+
+fieldset {
+  margin-bottom: 1rem;
+}
